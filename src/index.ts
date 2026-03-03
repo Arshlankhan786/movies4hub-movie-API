@@ -16,6 +16,11 @@ export const serverOrigin = Bun.env.SERVER_ORIGIN || "";
 
 
 const PORT = Number(process.env.PORT) || 3000;
+
+app.listen({
+  port: PORT,
+  hostname: "0.0.0.0"
+});
 const envOrigins = Bun.env.ALLOWED_ORIGINS;
 
 const ALLOWED_ORIGINS: string[] | "*" = envOrigins
