@@ -50,13 +50,18 @@ const app = new Elysia()
         const incomingSource: string | null = request.headers.get('origin') || request.headers.get('referer');
 
         // Since we bypassed "*", TypeScript knows ALLOWED_ORIGINS is definitely an array here
-        const isAllowed: boolean = incomingSource !== null &&
-            ALLOWED_ORIGINS.some((domain: string) => incomingSource.startsWith(domain));
+       // Allow direct browser access (no origin header)
+if (!incomingSource) return;
 
-        if (!isAllowed) {
-            set.status = 403;
-            return "";
-        }
+const isAllowed =
+    ALLOWED_ORIGINS === "*" ||
+    (Array.isArray(ALLOWED_ORIGINS) &&
+     ALLOWED_ORIGINS.some((domain) => incomingSource.startsWith(domain)));
+
+if (!isAllowed) {
+    set.status = 403;
+    return "Forbidden";
+}
     })
     .decorate("tmdb", tmdbClient)
     .get("/", () => {
