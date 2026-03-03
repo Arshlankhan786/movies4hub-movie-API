@@ -17,10 +17,7 @@ export const serverOrigin = Bun.env.SERVER_ORIGIN || "";
 
 const PORT = Number(process.env.PORT) || 3000;
 
-app.listen({
-  port: PORT,
-  hostname: "0.0.0.0"
-});
+
 const envOrigins = Bun.env.ALLOWED_ORIGINS;
 
 const ALLOWED_ORIGINS: string[] | "*" = envOrigins
@@ -492,9 +489,12 @@ const app = new Elysia()
                 })
             }
         }
-    )
+    );
 
-    .listen(PORT);
+    app.listen({
+  port: PORT,
+  hostname: "0.0.0.0"
+});
 
+logger.green(`Elysia running on http://0.0.0.0:${PORT}`);
 
-logger.green(`Elysia running on ${app.server?.protocol}://${app.server?.hostname}:${PORT}`)
