@@ -27,7 +27,11 @@ const WORKER_PROXY = "https://movies4hub-proxy.online902317.workers.dev";
 const tmdbClient = new TMDB(Bun.env.TMDB_ACCESS_TOKEN);
 
 function rewriteSourceUrl(originalUrl: string): string {
-    return `${WORKER_PROXY}?url=${encodeURIComponent(originalUrl)}`;
+
+    const cleanUrl = decodeURIComponent(originalUrl);
+
+    return `${WORKER_PROXY}?url=${encodeURIComponent(cleanUrl)}`;
+
 }
 
 const app = new Elysia()
