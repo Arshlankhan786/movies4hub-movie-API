@@ -14,7 +14,7 @@ import type { MovieDetails, TvShowDetails } from "tmdb-ts";
 import { getMultiEmbedSources } from "../scrapers/multiembed";
 import { getVidSrcSources } from "../scrapers/vidsrc";
 import type { Source } from "../types/types";
-
+import { getMovieBoxSources } from "../scrapers/moviebox";
 type Provider = {
     getMovie: (
         serve_cache: boolean,
@@ -32,7 +32,13 @@ export const providers: Record<string, Provider> = {
     // ── iframe providers ──────────────────────────────────────────────────────
     // These return type:"iframe" sources and are intentionally NOT wrapped in
     // proxifySources() — index.ts will pass them through unmodified.
+moviebox: {
+  getMovie: async (serve_cache, tmdb) =>
+      getMovieBoxSources(serve_cache, "movie", tmdb),
 
+  getTv: async (serve_cache, tmdb, season, episode) =>
+      getMovieBoxSources(serve_cache, "tv", tmdb, season, episode)
+},
     vidsrc: {
         getMovie: async (serve_cache, tmdb) =>
             getVidSrcSources(serve_cache, "movie", tmdb),
