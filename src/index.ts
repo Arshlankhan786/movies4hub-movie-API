@@ -26,12 +26,16 @@ const WORKER_PROXY = "https://movies4hub-proxy.online902317.workers.dev";
 
 const tmdbClient = new TMDB(Bun.env.TMDB_ACCESS_TOKEN);
 
-function rewriteSourceUrl(originalUrl: string): string {
+function rewriteSourceUrl(originalUrl: string, headers?: any): string {
 
     const cleanUrl = decodeURIComponent(originalUrl);
 
-    return `${WORKER_PROXY}?url=${encodeURIComponent(cleanUrl)}`;
+    const encodedUrl = encodeURIComponent(cleanUrl);
+    const encodedHeaders = headers
+        ? `&headers=${encodeURIComponent(JSON.stringify(headers))}`
+        : "";
 
+    return `${WORKER_PROXY}?url=${encodedUrl}${encodedHeaders}`;
 }
 
 const app = new Elysia()
@@ -100,10 +104,10 @@ const app = new Elysia()
 
                 const rawSources = await providers[provider].getMovie(serve_cache, tmdbMovie);
 
-                const sources = rawSources.map((source) => ({
-                    ...source,
-                    url: rewriteSourceUrl(source.url),
-                }));
+              const sources = rawSources.map((source) => ({
+  ...source,
+  url: rewriteSourceUrl(source.url, source.headers),
+}));
 
                 return {
                     type: "movie" as const,
@@ -179,10 +183,10 @@ const app = new Elysia()
 
                 const rawSources = await providers[provider].getTv(serve_cache, tmdbShow, season, episode);
 
-                const sources = rawSources.map((source) => ({
-                    ...source,
-                    url: rewriteSourceUrl(source.url),
-                }));
+             const sources = rawSources.map((source) => ({
+  ...source,
+  url: rewriteSourceUrl(source.url, source.headers),
+}));
 
                 return {
                     type: "tv" as const,
